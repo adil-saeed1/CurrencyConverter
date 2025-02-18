@@ -27,15 +27,15 @@ namespace CurrencyConverter.Controllers
             var rates = await provider.GetLatestRates(baseCurrency);
             return Ok(rates);
         }
-        [Authorize(Policy = "AdminPolicy")]
+        [Authorize(Roles = "Admin,Guest")]
         [HttpPost("convert")]
-        public IActionResult ConvertCurrency([FromBody] CurrencyConvertReq request)
+        public async Task<IActionResult> ConvertCurrency([FromBody] CurrencyConvertReq request)
         {
             var provider = _currencyProviderFactory.GetProvider(Providers.frankfurter);
-            var result = provider.ConvertCurrency(request);
-            return Ok(result);
+            var result = await provider.ConvertCurrency(request);
+            return Ok(new { ConvertedRate = result });
         }
-        [Authorize(Policy = "AdminPolicy")]
+        [Authorize(Roles = "Admin,Guest")]
         [HttpGet("history")]
         public async Task<IActionResult> GetHistoricalRates(string baseCurrency, DateTime startDate, DateTime endDate, int page, int pageSize)
         {

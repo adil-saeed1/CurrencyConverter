@@ -7,7 +7,6 @@ namespace CurrencyConverter.Controllers
 {
     [ApiController]
     [Route("api/auth")]
-    [ApiVersion("1.0")]
     public class AuthController : ControllerBase
     {
         IConfiguration _config;

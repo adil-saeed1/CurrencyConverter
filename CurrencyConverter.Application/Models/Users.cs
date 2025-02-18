@@ -10,8 +10,8 @@ namespace CurrencyExchange.Application.Models
 
         public List<Users> GetMockUsers()
         {
-            var json = System.IO.File.ReadAllText("users.json"); // Path to your JSON file
-            return JsonConvert.DeserializeObject<List<Users>>(json);
+            return new List<Users> { new Users { Username = "admin", Password = "12345",Role="Admin" },
+                                     new Users { Username = "guest", Password = "12345",Role="Guest" }};
         }
     }
 }

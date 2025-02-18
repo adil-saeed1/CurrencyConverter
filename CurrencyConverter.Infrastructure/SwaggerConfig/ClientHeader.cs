@@ -14,7 +14,7 @@ namespace CurrencyExchange.Infrastructure.SwaggerConfig
             {
                 Name = "clientid",
                 In = ParameterLocation.Header,
-                Description = "Client ID used for generating JWT token",
+                Description = "Client ID is required",
                 Required = true,
                 Schema = new OpenApiSchema
                 {

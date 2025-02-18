@@ -74,8 +74,9 @@ namespace CurrencyExchange.Infrastructure.Services
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30)
             };
             rates.TryGetValue(request.ToCurrency,out decimal rate);
-            await _cache.SetStringAsync(cacheKey,Convert.ToString(request.Amount * rate), cacheOptions);
-            return request.Amount* rate;
+            var convertedrate = request.Amount * rate;
+            await _cache.SetStringAsync(cacheKey,convertedrate.ToString(), cacheOptions);
+            return convertedrate;
         }
         public async Task<Dictionary<DateTime, Dictionary<string, decimal>>> GetHistoricalRates(string baseCurrency, DateTime startDate, DateTime endDate, int page, int pageSize)
         {

@@ -33,6 +33,7 @@ namespace CurrencyExchange.Infrastructure.Middleware
                 await context.Response.WriteAsync("Invalid Client.");
                 return;
             }
+            await _next(context);
         }
     }
 }
