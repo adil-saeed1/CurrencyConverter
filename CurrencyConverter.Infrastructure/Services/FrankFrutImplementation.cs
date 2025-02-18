@@ -49,6 +49,11 @@ namespace CurrencyExchange.Infrastructure.Services
         public async Task<decimal> ConvertCurrency(CurrencyConvertReq request)
         {
 
+            var excludedCurrencies = new[] { "TRY", "PLN", "THB", "MXN" };
+            if (excludedCurrencies.Contains(request.FromCurrency) || excludedCurrencies.Contains(request.ToCurrency))
+            {
+                throw new ArgumentException("Conversion involving excluded currencies is not allowed.");
+            }
             var cacheKey = $"converted-rate-{request.FromCurrency}&symbols={request.ToCurrency}";
             var cachedConvertedRate = await _cache.GetStringAsync(cacheKey);
             if (!string.IsNullOrEmpty(cachedConvertedRate))

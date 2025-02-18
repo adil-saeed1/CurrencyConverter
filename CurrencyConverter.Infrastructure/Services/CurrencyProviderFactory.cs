@@ -16,7 +16,7 @@ namespace CurrencyExchange.Infrastructure.Services
             {
                 return _currencyConverter;
             }
-            return _currencyConverter;
+            throw new NotImplementedException() ;
         }
     }
 }

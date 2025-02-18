@@ -11,9 +11,10 @@ namespace CurrencyExchange.Infrastructure.Middleware
         private readonly int Limit = 15;
         private readonly IConfiguration _configuration;
         
-        public RateLimitMiddleWare( RequestDelegate next)
+        public RateLimitMiddleWare(RequestDelegate next,IConfiguration configuration)
         {
             _next = next;
+            _configuration = configuration;
             Limit = Convert.ToInt32(_configuration["ApiThrottling:RateLimit"]);
         }
 
@@ -21,7 +22,7 @@ namespace CurrencyExchange.Infrastructure.Middleware
         {
             var ip = context.Connection.RemoteIpAddress?.ToString();
             int requestCount = 1;
-            if (!string.IsNullOrEmpty(ip))
+            if (!string.IsNullOrEmpty(ip) && ip!= "::1")
             {
                 var cacheKey = $"RateLimit:{ip}";
                 if(_cache.GetCacheItem(cacheKey)!=null)

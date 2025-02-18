@@ -8,6 +8,9 @@ using CurrencyExchange.Infrastructure.Services;
 using CurrencyExchange.Infrastructure.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using CurrencyExchange.Infrastructure.ResilienceProvider;
+using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.AspNetCore.Mvc;
+using CurrencyExchange.Infrastructure.SwaggerConfig;
 
 
 
@@ -17,9 +20,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Configuration
 var configuration = builder.Configuration;
-
-//logger
-
 
 builder.Host.UseSerilog((context, config) =>
 {
@@ -55,7 +55,6 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Enter 'Bearer' [space] and your token. Example: \"Bearer your_token\""
     });
 
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -68,6 +67,8 @@ builder.Services.AddSwaggerGen(c =>
             Array.Empty<string>()
         }
     });
+    c.OperationFilter<AddClientIdHeaderParameter>();
+
 });
 
 
@@ -109,6 +110,14 @@ builder.Services.AddHttpClient("FrankfurterClient", client =>
 .AddPolicyHandler(ResilienceProvider.GetRetryPolicy())
 .AddPolicyHandler(ResilienceProvider.GetCircuitBreakerPolicy());
 
+//api versioning
+builder.Services.AddApiVersioning(options =>
+{
+    options.DefaultApiVersion = new ApiVersion(1, 0); 
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ReportApiVersions = true;
+    options.ApiVersionReader = new UrlSegmentApiVersionReader();
+});
 
 // API Rate Limiting
 builder.Services.AddMemoryCache();
@@ -119,8 +128,13 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(
+        options =>
+        {
+            options.SwaggerEndpoint("/swagger/v1/swagger.json", "Currency Converter API");
+        });
 }
+app.UseMiddleware<ValidateClientMiddleWare>();
 app.UseMiddleware<LoggingMiddleware>();
 app.UseMiddleware<RateLimitMiddleWare>();
 app.UseHttpsRedirection();

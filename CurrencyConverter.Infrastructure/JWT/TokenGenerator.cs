@@ -15,7 +15,7 @@ namespace CurrencyExchange.Infrastructure.JWT
             _configuration = config;
         }
 
-        public string GenerateJwtToken(string clientId, string role)
+        public string GenerateJwtToken(string userName, string clientId, string role)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -24,7 +24,8 @@ namespace CurrencyExchange.Infrastructure.JWT
             {
             new Claim(JwtRegisteredClaimNames.Sub, clientId),
             new Claim(ClaimTypes.Role, role),
-            new Claim(ClaimTypes.Name, clientId),
+            new Claim("ClientId", clientId),
+            new Claim(ClaimTypes.Name, userName),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 

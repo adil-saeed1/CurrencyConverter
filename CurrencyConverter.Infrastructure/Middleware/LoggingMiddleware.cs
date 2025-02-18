@@ -23,12 +23,11 @@ namespace CurrencyExchange.Infrastructure.Middleware
             var clientIp = context.Connection.RemoteIpAddress?.ToString() ?? "Unknown";
             var method = context.Request.Method;
             var endpoint = context.Request.Path;
-            var clientId = context.User?.FindFirst("client_id")?.Value ?? "Unknown";
+            var clientId = context.Request.Headers["clientid"].FirstOrDefault();
 
             _logger.LogInformation("Incoming request: ClientId: {ClientId}, IP: {ClientIp}, Method: {Method}, Endpoint: {Endpoint}, CorrelationId: {CorrelationId}",
                 clientId, clientIp, method, endpoint, correlationId);
 
-            // Invoke next middleware and capture response details
             await _next(context);
 
             var responseTime = (DateTime.UtcNow - startTime).TotalMilliseconds;

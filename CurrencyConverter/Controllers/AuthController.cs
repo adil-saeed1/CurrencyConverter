@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using CurrencyExchange.Application.Models;
 using CurrencyExchange.Infrastructure.JWT;
+using StackExchange.Redis;
 
 namespace CurrencyConverter.Controllers
 {
     [ApiController]
     [Route("api/auth")]
+    [ApiVersion("1.0")]
     public class AuthController : ControllerBase
     {
         IConfiguration _config;
@@ -14,12 +16,15 @@ namespace CurrencyConverter.Controllers
             _config = config;
         }
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRequest loginRequest)
+        public IActionResult Login([FromBody] LoginReq loginRequest)
         {
-            if (loginRequest.ClientId == "admin" || loginRequest.ClientId == "guest")
+            var users = new Users().GetMockUsers();
+            var user = users.FirstOrDefault(u => u.Username.Equals(loginRequest.UserName, StringComparison.OrdinalIgnoreCase) && u.Password == loginRequest.Password);
+
+            if (user != null)
             {
-                var role = loginRequest.ClientId == "admin" ? "Admin" : "Guest";
-                var token = new JWTTokenGenerator(_config).GenerateJwtToken(loginRequest.ClientId, role);
+                var clientId = Request.Headers["clientid"].FirstOrDefault();
+                var token = new JWTTokenGenerator(_config).GenerateJwtToken(user.Username, clientId, user.Role);
                 return Ok(new { Token = token });
             }
             return Unauthorized();
