@@ -25,3 +25,5 @@
 /CurrencyExchange.Application/bin/Debug/net8.0
 /CurrencyConverter.Test/bin
 /CurrencyConverter.Test/obj
+/CurrencyConverter.UnitTest/bin/Debug/net8.0
+/CurrencyConverter.UnitTest/obj
