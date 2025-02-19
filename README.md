@@ -12,8 +12,8 @@ This project implements a robust, scalable, and maintainable currency conversion
 
 ## Configuration Steps
 1-Clone the Repository
-  
-    https://github.com/adil-saeed1/CurrencyExchange.git
+
+    https://github.com/adil-saeed1/CurrencyConverter.git
     cd CurrencyConverterAPI
 
  
