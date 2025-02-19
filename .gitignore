@@ -16,3 +16,10 @@
 /CurrencyExchange.Test/bin/Debug/net8.0
 /CurrencyExchange.Test/bin/Release/net8.0
 /CurrencyConverter.Application/obj
+/CurrencyExchange/bin/Debug/net8.0
+/CurrencyExchange/logs
+/CurrencyExchange/obj
+/CurrencyExchange.Application/obj
+/CurrencyExchange.Infrastructure/bin/Debug/net8.0
+/CurrencyExchange.Infrastructure/obj
+/CurrencyExchange.Application/bin/Debug/net8.0
