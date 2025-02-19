@@ -109,10 +109,12 @@ This project implements a robust, scalable, and maintainable currency conversion
    -  **Testing** 
     - Use NUnit for unit testing and Jmeter for stress testing.
 
-## Sample Request Body
-
+## Sample Request
+**Version:**
+- `Version`: 1
+- 
 **Headers:**
-- `cliendid`: client1
+- `cliendid`: frankfruttestingclient
 
 **Request Body:**
 ```json
