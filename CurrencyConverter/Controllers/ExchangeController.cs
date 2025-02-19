@@ -9,12 +9,12 @@ namespace CurrencyConverter.Controllers
     [ApiVersion("1.0")]
     [ApiController]
     [Route("api/v{version:apiVersion}/Exchange")]
-    public class ExchangeController : ControllerBase
+    public class ConverterController : ControllerBase
     {
-        private readonly ILogger<ExchangeController> _logger;
+        private readonly ILogger<ConverterController> _logger;
         private readonly ICurrencyProviderFactory _currencyProviderFactory;
 
-        public ExchangeController(ICurrencyProviderFactory currencyProviderFactory, ILogger<ExchangeController> logger)
+        public ConverterController(ICurrencyProviderFactory currencyProviderFactory, ILogger<ConverterController> logger)
         {
             _currencyProviderFactory = currencyProviderFactory;
             _logger = logger;
