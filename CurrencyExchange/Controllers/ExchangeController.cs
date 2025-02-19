@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using CurrencyExchange.Application.Models;
-using CurrencyExchange.Application.Interfaces;
-using static CurrencyExchange.Application.Common.Enumerator;
+using CurrencyConverter.Application.Models;
+using CurrencyConverter.Application.Interfaces;
+using static CurrencyConverter.Application.Common.Enumerator;
 
 namespace CurrencyConverter.Controllers
 {

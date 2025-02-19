@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace CurrencyExchange.Application.Models
+namespace CurrencyConverter.Application.Models
 {
     public class Users
     {

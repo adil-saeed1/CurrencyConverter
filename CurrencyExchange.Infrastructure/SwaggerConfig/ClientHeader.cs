@@ -1,7 +1,7 @@
 ﻿using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace CurrencyExchange.Infrastructure.SwaggerConfig
+namespace CurrencyConverter.Infrastructure.SwaggerConfig
 {
     public class AddClientIdHeaderParameter : IOperationFilter
     {

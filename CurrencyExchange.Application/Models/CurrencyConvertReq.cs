@@ -1,4 +1,4 @@
-﻿namespace CurrencyExchange.Application.Models
+﻿namespace CurrencyConverter.Application.Models
 {
     public class CurrencyConvertReq
     {

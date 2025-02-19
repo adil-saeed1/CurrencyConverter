@@ -1,7 +1,7 @@
 ﻿using Polly;
 using Polly.Extensions.Http;
 
-namespace CurrencyExchange.Infrastructure.ResilienceProvider
+namespace CurrencyConverter.Infrastructure.ResilienceProvider
 {
     public static class ResilienceProvider
     {

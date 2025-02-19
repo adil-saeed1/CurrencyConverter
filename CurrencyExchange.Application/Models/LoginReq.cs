@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace CurrencyExchange.Application.Models
+namespace CurrencyConverter.Application.Models
 {
     public class LoginReq
     {

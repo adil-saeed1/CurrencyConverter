@@ -1,6 +1,6 @@
-﻿using CurrencyExchange.Application.Models;
+﻿using CurrencyConverter.Application.Models;
 
-namespace CurrencyExchange.Application.Interfaces
+namespace CurrencyConverter.Application.Interfaces
 {
     public interface ICurrencyConverter
     {

@@ -1,7 +1,7 @@
-﻿using CurrencyExchange.Application.Interfaces;
-using static CurrencyExchange.Application.Common.Enumerator;
+﻿using CurrencyConverter.Application.Interfaces;
+using static CurrencyConverter.Application.Common.Enumerator;
 
-namespace CurrencyExchange.Infrastructure.Services
+namespace CurrencyConverter.Infrastructure.Services
 {
     public class CurrencyProviderFactory : ICurrencyProviderFactory
     {

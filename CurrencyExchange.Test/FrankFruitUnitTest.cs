@@ -4,10 +4,10 @@ using Moq.Protected;
 using NUnit.Framework;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using CurrencyExchange.Infrastructure.Services;
+using CurrencyConverter.Infrastructure.Services;
 using Microsoft.Extensions.Caching.Distributed;
 
-namespace CurrencyExchange.Test
+namespace CurrencyConverter.Test
 {
     public class FrankFrutImplementationUnitTest
     {
