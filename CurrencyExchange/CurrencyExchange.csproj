@@ -31,8 +31,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CurrencyConverter.Application\CurrencyExchange.Application.csproj" />
-    <ProjectReference Include="..\CurrencyConverter.Infrastructure\CurrencyExchange.Infrastructure.csproj" />
+    <ProjectReference Include="..\CurrencyExchange.Application\CurrencyExchange.Application.csproj" />
+    <ProjectReference Include="..\CurrencyExchange.Infrastructure\CurrencyExchange.Infrastructure.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1development_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>

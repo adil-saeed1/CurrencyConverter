@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CurrencyConverter\CurrencyConverter.csproj" />
+    <ProjectReference Include="..\CurrencyExchange.Infrastructure\CurrencyExchange.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
