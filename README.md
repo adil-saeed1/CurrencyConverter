@@ -87,7 +87,10 @@ This project implements a robust, scalable, and maintainable currency conversion
  -  **API Versioning**
     
     -   Versioned routes for backward compatibility.
-   
+
+ -  **Unit Testing**
+    
+    -   Implement one unit test as sample for get latest rate api.
 
  ## Assumptions Made
  -  **Exchange Rate Provider** 
@@ -106,8 +109,8 @@ This project implements a robust, scalable, and maintainable currency conversion
  -  **Multi-Provider Support** 
     - Extend the CurrencyProviderFactory to support multiple exchange rate
    providers.
-   -  **Testing** 
-    - Use NUnit for unit testing and Jmeter for stress testing.
+   -  **Integration Testing** 
+    - use Jmeter and postman tool for integration and regress testing
 
 ## Sample Request
 **Version:**
