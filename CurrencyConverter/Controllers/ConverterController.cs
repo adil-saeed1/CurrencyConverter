@@ -8,7 +8,7 @@ namespace CurrencyConverter.Controllers
 {
     [ApiVersion("1.0")]
     [ApiController]
-    [Route("api/v{version:apiVersion}/Exchange")]
+    [Route("api/v{version:apiVersion}/Converter")]
     public class ConverterController : ControllerBase
     {
         private readonly ILogger<ConverterController> _logger;
