@@ -112,7 +112,7 @@ This project implements a robust, scalable, and maintainable currency conversion
 ## Sample Request
 **Version:**
 - `Version`: 1
-- 
+
 **Headers:**
 - `cliendid`: frankfruttestingclient
 
