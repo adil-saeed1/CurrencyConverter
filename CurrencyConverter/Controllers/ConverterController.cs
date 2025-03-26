@@ -31,6 +31,10 @@ namespace CurrencyConverter.Controllers
         [HttpPost("convert")]
         public async Task<IActionResult> ConvertCurrency([FromBody] CurrencyConvertReq request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var provider = _currencyProviderFactory.GetProvider(Providers.frankfurter);
             var result = await provider.ConvertCurrency(request);
             return Ok(new { ConvertedRate = result });

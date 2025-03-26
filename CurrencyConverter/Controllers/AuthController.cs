@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using CurrencyConverter.Application.Models;
 using CurrencyConverter.Infrastructure.JWT;
-using StackExchange.Redis;
 
 namespace CurrencyConverter.Controllers
 {
@@ -17,6 +16,10 @@ namespace CurrencyConverter.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginReq loginRequest)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var users = new Users().GetMockUsers();
             var user = users.FirstOrDefault(u => u.Username.Equals(loginRequest.UserName, StringComparison.OrdinalIgnoreCase) && u.Password == loginRequest.Password);
 
