@@ -1,11 +1,11 @@
 ﻿using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using CurrencyExchange.Application.Models;
+using CurrencyConverter.Application.Models;
 using Microsoft.Extensions.Caching.Distributed;
-using CurrencyExchange.Application.Interfaces;
+using CurrencyConverter.Application.Interfaces;
 using System.Net.Http;
 
-namespace CurrencyExchange.Infrastructure.Services
+namespace CurrencyConverter.Infrastructure.Services
 {
     public class FrankFrutImplementation : ICurrencyConverter
     {

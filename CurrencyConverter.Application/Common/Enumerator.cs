@@ -1,4 +1,4 @@
-﻿namespace CurrencyExchange.Application.Common
+﻿namespace CurrencyConverter.Application.Common
 {
     public class Enumerator
     {

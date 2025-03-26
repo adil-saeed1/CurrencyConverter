@@ -3,14 +3,14 @@ using System.Text;
 using OpenTelemetry.Trace;
 using Microsoft.OpenApi.Models;
 using Microsoft.IdentityModel.Tokens;
-using CurrencyExchange.Application.Interfaces;
-using CurrencyExchange.Infrastructure.Services;
-using CurrencyExchange.Infrastructure.Middleware;
+using CurrencyConverter.Application.Interfaces;
+using CurrencyConverter.Infrastructure.Services;
+using CurrencyConverter.Infrastructure.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using CurrencyExchange.Infrastructure.ResilienceProvider;
+using CurrencyConverter.Infrastructure.ResilienceProvider;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.AspNetCore.Mvc;
-using CurrencyExchange.Infrastructure.SwaggerConfig;
+using CurrencyConverter.Infrastructure.SwaggerConfig;
 
 
 

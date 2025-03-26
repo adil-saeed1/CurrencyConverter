@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace CurrencyExchange.Infrastructure.Middleware
+namespace CurrencyConverter.Infrastructure.Middleware
 {
     public class LoggingMiddleware
     {

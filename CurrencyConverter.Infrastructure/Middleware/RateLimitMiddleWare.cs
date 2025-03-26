@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 
-namespace CurrencyExchange.Infrastructure.Middleware
+namespace CurrencyConverter.Infrastructure.Middleware
 {
     public class RateLimitMiddleWare
     {

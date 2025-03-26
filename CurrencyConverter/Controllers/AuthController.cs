@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using CurrencyExchange.Application.Models;
-using CurrencyExchange.Infrastructure.JWT;
+using CurrencyConverter.Application.Models;
+using CurrencyConverter.Infrastructure.JWT;
 using StackExchange.Redis;
 
 namespace CurrencyConverter.Controllers

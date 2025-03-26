@@ -1,34 +1,34 @@
-﻿using Moq;
-using Xunit;
+using Moq;
 using Moq.Protected;
-using NUnit.Framework;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using CurrencyExchange.Infrastructure.Services;
 using Microsoft.Extensions.Caching.Distributed;
+using CurrencyConverter.Infrastructure.Services;
 
-namespace CurrencyExchange.Test
+namespace CurrencyConverter.Tests
 {
-    public class FrankFrutImplementationUnitTest
+    public class FrankFrut_UnitTest
     {
-        private readonly Mock<IDistributedCache> _cacheMock;
-        private readonly Mock<IHttpClientFactory> _httpClientFactoryMock;
-        private readonly Mock<ILogger<FrankFrutImplementation>> _loggerMock;
-        private readonly FrankFrutImplementation _service;
-
-        public FrankFrutImplementationUnitTest()
+        private  Mock<IDistributedCache> _cacheMock;
+        private  Mock<IHttpClientFactory> _httpClientFactoryMock;
+        private  Mock<ILogger<FrankFrutImplementation>> _loggerMock;
+        private  FrankFrutImplementation _service;
+      
+        [SetUp]
+        public void Setup()
         {
             _cacheMock = new Mock<IDistributedCache>();
             _httpClientFactoryMock = new Mock<IHttpClientFactory>();
             _loggerMock = new Mock<ILogger<FrankFrutImplementation>>();
             _service = new FrankFrutImplementation(_cacheMock.Object, _httpClientFactoryMock.Object, _loggerMock.Object);
+         
         }
-        [Fact]
-        public async Task GetLatestRates_SimpleApiCall_ReturnsExpectedResult()
+
+        [Test]
+        public void GetLatestRates_ShouldReturnMockedRates()
         {
-            // Arrange
             string baseCurrency = "USD";
-            var apiResponse = new { rates = new Dictionary<string, decimal> { { "EUR", 0.85m }, { "GBP", 0.75m } } };
+            var apiResponse = new { rates = new Dictionary<string, decimal> {  { "GBP", 0.75m } } };
             var jsonResponse = JsonSerializer.Serialize(apiResponse);
 
             var httpResponseMessage = new HttpResponseMessage
@@ -50,14 +50,12 @@ namespace CurrencyExchange.Test
             _httpClientFactoryMock.Setup(f => f.CreateClient("FrankfurterClient")).Returns(httpClient);
 
             // Act
-            var result = await _service.GetLatestRates(baseCurrency);
+            var result =  _service.GetLatestRates(baseCurrency).Result;
 
             // Assert
-            Assert.That(result,Is.Not.Null);
-            Assert.Equals(apiResponse.rates.Count, result.Count);
-            Assert.Equals(apiResponse.rates, result);
-        }
+            Assert.That(result, Is.Not.Null);
+            Assert.AreEqual(apiResponse.rates, result);
 
-       
+        }
     }
 }
