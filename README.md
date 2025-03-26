@@ -112,7 +112,7 @@ This project implements a robust, scalable, and maintainable currency conversion
 ## Sample Request Body
 
 **Headers:**
-- `cliendid`: client1
+- `cliendid`: frankfruttestingclient
 
 **Request Body:**
 ```json
