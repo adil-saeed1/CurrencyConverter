@@ -1,22 +1,25 @@
 using Serilog;
 using System.Text;
+using FluentValidation;
 using OpenTelemetry.Trace;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Mvc;
+using FluentValidation.AspNetCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Mvc.Versioning;
+using CurrencyConverter.Application.Models;
 using CurrencyConverter.Application.Interfaces;
 using CurrencyConverter.Infrastructure.Services;
+using CurrencyExchange.Infrastructure.Middleware;
+using CurrencyExchange.Application.ModelValidator;
 using CurrencyConverter.Infrastructure.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using CurrencyConverter.Infrastructure.ResilienceProvider;
-using Microsoft.AspNetCore.Mvc.Versioning;
-using Microsoft.AspNetCore.Mvc;
 using CurrencyConverter.Infrastructure.SwaggerConfig;
+using CurrencyConverter.Infrastructure.ResilienceProvider;
 
 
 
 var builder = WebApplication.CreateBuilder(args);
-
-
 
 // Configuration
 var configuration = builder.Configuration;
@@ -98,9 +101,13 @@ builder.Services.AddStackExchangeRedisCache(options =>
 });
 
 // Dependency Injection
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddScoped<ICurrencyConverter, FrankFrutImplementation>();
 builder.Services.AddScoped<ICurrencyProviderFactory, CurrencyProviderFactory>();
-
+builder.Services.AddTransient<IValidator<CurrencyConvertReq>, CurrencyConvertReqValidator>();
+builder.Services.AddTransient<IValidator<LoginReq>, LoginReqValidator>();
 
 // HTTP client with Polly resilience
 builder.Services.AddHttpClient("FrankfurterClient", client =>
@@ -113,7 +120,7 @@ builder.Services.AddHttpClient("FrankfurterClient", client =>
 //api versioning
 builder.Services.AddApiVersioning(options =>
 {
-    options.DefaultApiVersion = new ApiVersion(1, 0); 
+    options.DefaultApiVersion = new ApiVersion(1, 0);
     options.AssumeDefaultVersionWhenUnspecified = true;
     options.ReportApiVersions = true;
     options.ApiVersionReader = new UrlSegmentApiVersionReader();
@@ -124,6 +131,7 @@ builder.Services.AddMemoryCache();
 
 var app = builder.Build();
 
+app.UseExceptionHandler();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -134,8 +142,8 @@ if (app.Environment.IsDevelopment())
             options.SwaggerEndpoint("/swagger/v1/swagger.json", "Currency Converter API");
         });
 }
-app.UseMiddleware<ValidateClientMiddleWare>();
 app.UseMiddleware<LoggingMiddleware>();
+app.UseMiddleware<ValidateClientMiddleWare>();
 app.UseMiddleware<RateLimitMiddleWare>();
 app.UseHttpsRedirection();
 
