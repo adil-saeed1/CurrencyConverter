@@ -21,87 +21,110 @@ namespace CurrencyConverter.Infrastructure.Services
         }
         public async Task<Dictionary<string, decimal>> GetLatestRates(string baseCurrency)
         {
-            var cacheKey = $"latest-rate-{baseCurrency}";
-            var cachedRates = await _cache.GetStringAsync(cacheKey);
-            if (!string.IsNullOrEmpty(cachedRates))
+            try
             {
-                _logger.LogInformation("Returning cached exchange rates for {baseCurrency}", baseCurrency);
-                return JsonSerializer.Deserialize<Dictionary<string, decimal>>(cachedRates);
+                var cacheKey = $"latest-rate-{baseCurrency}";
+                var cachedRates = await _cache.GetStringAsync(cacheKey);
+                if (!string.IsNullOrEmpty(cachedRates))
+                {
+                    _logger.LogInformation("Returning cached exchange rates for {baseCurrency}", baseCurrency);
+                    return JsonSerializer.Deserialize<Dictionary<string, decimal>>(cachedRates);
+                }
+
+                var client = _httpClientFactory.CreateClient("FrankfurterClient");
+                var response = await client.GetAsync($"latest?base={baseCurrency}");
+                response.EnsureSuccessStatusCode();
+
+                var jsonResponse = await response.Content.ReadAsStringAsync();
+                var rates = JsonSerializer.Deserialize<JsonElement>(jsonResponse).GetProperty("rates").Deserialize<Dictionary<string, decimal>>();
+
+                var cacheOptions = new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30)
+                };
+                await _cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(rates), cacheOptions);
+
+                _logger.LogInformation("Fetched and cached latest exchange rates for {baseCurrency}", baseCurrency);
+                return rates;
             }
-
-            var client = _httpClientFactory.CreateClient("FrankfurterClient");
-            var response = await client.GetAsync($"latest?base={baseCurrency}");
-            response.EnsureSuccessStatusCode();
-
-            var jsonResponse = await response.Content.ReadAsStringAsync();
-            var rates = JsonSerializer.Deserialize<JsonElement>(jsonResponse).GetProperty("rates").Deserialize<Dictionary<string, decimal>>();
-
-            var cacheOptions = new DistributedCacheEntryOptions
+            catch (Exception ex)
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30)
-            };
-            await _cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(rates), cacheOptions);
-
-            _logger.LogInformation("Fetched and cached latest exchange rates for {baseCurrency}", baseCurrency);
-            return rates;
+                throw;
+            }
 
         }
         public async Task<decimal> ConvertCurrency(CurrencyConvertReq request)
         {
-
-            var excludedCurrencies = new[] { "TRY", "PLN", "THB", "MXN" };
-            if (excludedCurrencies.Contains(request.FromCurrency) || excludedCurrencies.Contains(request.ToCurrency))
+            try
             {
-                throw new ArgumentException("Conversion involving excluded currencies is not allowed.");
+
+                var excludedCurrencies = new[] { "TRY", "PLN", "THB", "MXN" };
+                if (excludedCurrencies.Contains(request.FromCurrency) || excludedCurrencies.Contains(request.ToCurrency))
+                {
+                    throw new ArgumentException("Conversion involving excluded currencies is not allowed.");
+                }
+                var cacheKey = $"converted-rate-{request.FromCurrency}&symbols={request.ToCurrency}";
+                var cachedConvertedRate = await _cache.GetStringAsync(cacheKey);
+                if (!string.IsNullOrEmpty(cachedConvertedRate))
+                {
+                    _logger.LogInformation("Returning cached converted rate for {baseCurrency}", request.FromCurrency);
+                    return Convert.ToDecimal(cachedConvertedRate);
+                }
+
+                var client = _httpClientFactory.CreateClient("FrankfurterClient");
+                var response = await client.GetAsync($"latest?base={request.FromCurrency}&symbols={request.ToCurrency}");
+                response.EnsureSuccessStatusCode();
+
+                var jsonResponse = await response.Content.ReadAsStringAsync();
+                var rates = JsonSerializer.Deserialize<JsonElement>(jsonResponse).GetProperty("rates").Deserialize<Dictionary<string, decimal>>();
+
+                var cacheOptions = new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30)
+                };
+                rates.TryGetValue(request.ToCurrency, out decimal rate);
+                var convertedrate = request.Amount * rate;
+                await _cache.SetStringAsync(cacheKey, convertedrate.ToString(), cacheOptions);
+                return convertedrate;
             }
-            var cacheKey = $"converted-rate-{request.FromCurrency}&symbols={request.ToCurrency}";
-            var cachedConvertedRate = await _cache.GetStringAsync(cacheKey);
-            if (!string.IsNullOrEmpty(cachedConvertedRate))
+            catch (Exception ex)
             {
-                _logger.LogInformation("Returning cached converted rate for {baseCurrency}", request.FromCurrency);
-                return Convert.ToDecimal(cachedConvertedRate);
+                throw;
             }
-
-            var client = _httpClientFactory.CreateClient("FrankfurterClient");
-            var response = await client.GetAsync($"latest?base={request.FromCurrency}&symbols={request.ToCurrency}");
-            response.EnsureSuccessStatusCode();
-
-            var jsonResponse = await response.Content.ReadAsStringAsync();
-            var rates = JsonSerializer.Deserialize<JsonElement>(jsonResponse).GetProperty("rates").Deserialize<Dictionary<string, decimal>>();
-
-            var cacheOptions = new DistributedCacheEntryOptions
-            {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30)
-            };
-            rates.TryGetValue(request.ToCurrency,out decimal rate);
-            var convertedrate = request.Amount * rate;
-            await _cache.SetStringAsync(cacheKey,convertedrate.ToString(), cacheOptions);
-            return convertedrate;
         }
         public async Task<Dictionary<DateTime, Dictionary<string, decimal>>> GetHistoricalRates(string baseCurrency, DateTime startDate, DateTime endDate, int page, int pageSize)
         {
-            var cacheKey = $"rate-history-{startDate:yyyy-MM-dd}..{endDate:yyyy-MM-dd}?base={baseCurrency}";
-            var cachedHistory = await _cache.GetStringAsync(cacheKey);
-            if (!string.IsNullOrEmpty(cachedHistory))
+            try
             {
-                _logger.LogInformation("Returning cacehed history rates for {baseCurrency}", baseCurrency);
-                var  cahcedData = JsonSerializer.Deserialize<Dictionary<DateTime, Dictionary<string, decimal>>>(cachedHistory) ;
-                return cahcedData.Skip((page - 1) * pageSize).Take(pageSize).ToDictionary(k => k.Key, v => v.Value);
+                var cacheKey = $"rate-history-{startDate:yyyy-MM-dd}..{endDate:yyyy-MM-dd}?base={baseCurrency}";
+                var cachedHistory = await _cache.GetStringAsync(cacheKey);
+                if (!string.IsNullOrEmpty(cachedHistory))
+                {
+                    _logger.LogInformation("Returning cacehed history rates for {baseCurrency}", baseCurrency);
+                    var cahcedData = JsonSerializer.Deserialize<Dictionary<DateTime, Dictionary<string, decimal>>>(cachedHistory);
+                    return cahcedData.Skip((page - 1) * pageSize).Take(pageSize).ToDictionary(k => k.Key, v => v.Value);
+                }
+
+                var client = _httpClientFactory.CreateClient("FrankfurterClient");
+                var response = await client.GetAsync($"{startDate:yyyy-MM-dd}..{endDate:yyyy-MM-dd}?base={baseCurrency}");
+                response.EnsureSuccessStatusCode();
+
+                var jsonResponse = await response.Content.ReadAsStringAsync();
+                var rates = JsonSerializer.Deserialize<JsonElement>(jsonResponse).GetProperty("rates").Deserialize<Dictionary<DateTime, Dictionary<string, decimal>>>();
+
+                var cacheOptions = new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30)
+                };
+                await _cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(rates), cacheOptions);
+                return rates.Skip((page - 1) * pageSize).Take(pageSize).ToDictionary(k => k.Key, v => v.Value);
+
             }
-
-            var client = _httpClientFactory.CreateClient("FrankfurterClient");
-            var response = await client.GetAsync($"{startDate:yyyy-MM-dd}..{endDate:yyyy-MM-dd}?base={baseCurrency}");
-            response.EnsureSuccessStatusCode();
-
-            var jsonResponse = await response.Content.ReadAsStringAsync();
-            var rates = JsonSerializer.Deserialize<JsonElement>(jsonResponse).GetProperty("rates").Deserialize<Dictionary<DateTime, Dictionary<string, decimal>>>();
-           
-            var cacheOptions = new DistributedCacheEntryOptions
+            catch (Exception ex)
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30)
-            };
-            await _cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(rates), cacheOptions);
-            return rates.Skip((page - 1) * pageSize).Take(pageSize).ToDictionary(k => k.Key, v => v.Value);
+                throw;
+            }
+            
         }
 
     }
